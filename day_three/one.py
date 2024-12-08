@@ -16,6 +16,8 @@ pattern = r"mul\(\d+,\d+\)"
 # Use re.findall to extract all matches
 matches = re.findall(pattern, file_content)
 
+print("matches check",matches)
+
 for pair in matches:
     pattern_one = r"\(([^,]+),"
     pattern_two= r",([^)]+)\)"
