@@ -1,15 +1,22 @@
-import re
-file_path = 'test.txt'
+from re import findall
+
+total1 = total2 = 0
+enabled = True
+# Specify the path to your text file
+file_path = 'input2.txt'
 
 # Open the file and read its content as a string
 with open(file_path, 'r') as file:
     file_content = file.read()
 
+for a, b, do, dont in findall(r"mul\((\d+),(\d+)\)|(do\(\))|(don't\(\))", file_content):
+    if do or dont:
+        enabled = bool(do)
+    else:
+        x = int(a) * int(b)
+        if enabled: 
+            print("Extracted string:",int(a),int(b),x)
+        total1 += x
+        total2 += x * enabled
 
-match = re.search(r'do\(\)(.*)', file_content)
-result = match.group(1)  # Extract everything after 'do()'
-print(result)
-
-
-# do_chunk = file_content.split('do()')[-1]
-# print("do chunk",do_chunk)
+print( total2)

@@ -1,59 +1,42 @@
 import re
 
-# Initialize total_sum and matches list
+# Initialize total sum and matches list
 total_sum = 0
 valid_matches = []
 
 # Specify the path to your text file
-file_path = 'input.txt'
+file_path = 'input2.txt'
 
-# Open the file and read its content as a string
+# Read the file content and normalize it by removing newlines
 with open(file_path, 'r') as file:
-    file_content = file.read()
+    file_content = file.read().replace('\n', '')
 
-# Split the content into chunks based on 'don't()' occurrences
+# Split the content into chunks based on "don't()"
 chunks = file_content.split("don't()")
 
-# Define the pattern for mul(x,y) where x and y are integers
-pattern = r"mul\(\d+,\d+\)"
+# Define the pattern to extract `mul(x,y)` directly
+pattern = r"mul\((\d+),(\d+)\)"
 
-
-# Loop trough the chunks and consider valid pairs 
-for i,chunk in enumerate(chunks):
-    # If 'do()' appears in the chunk, process it; otherwise skip
-    if i == 0:
-        first_chuck_matches = re.findall(pattern, chunk)
-        print("first chuck match",first_chuck_matches)
-        valid_matches+=first_chuck_matches
+# Loop through the chunks and process them
+for i, chunk in enumerate(chunks):
+    if i == 0:  # First chunk is always valid
+        matches = re.findall(pattern, chunk)
+        # print("First chunk matches:", matches)
+        valid_matches.extend(matches)
     else:
-        print("chunk",i,":",chunk)    
-
+        # Process only if 'do()' exists in the chunk
         if 'do()' in chunk:
-            # Consider only the part of the chunk after the first 'do()' occurance
-            match = re.search(r'do\(\)(.*)', chunk)
-            result_after_fist_do = match.group(1) 
-            
-            print("do chunk",i,":",result_after_fist_do)
-        
-            # Find all matches in the current chunk
-            found_matches = re.findall(pattern, result_after_fist_do)
-            valid_matches+=found_matches
-            print("do chunk matches",i,":",found_matches)
+            # Extract the portion after the first 'do()'
+            result_after_do = chunk.split('do()', 1)[1]
+            matches = re.findall(pattern, result_after_do)
+            print(f"Do chunk {i} matches:", matches)
+            valid_matches.extend(matches)
 
+# Compute the total sum of products
+for x, y in valid_matches:
+    product = int(x) * int(y)
+    print("Extracted numbers:", x, y, "Product:", product)
+    total_sum += product
 
-# Loop though the valid pairs, calculate the product and add to totalsum
-for pair in valid_matches:
-    pattern_one = r"\(([^,]+),"
-    pattern_two= r",([^)]+)\)"
-    match_one = re.search(pattern_one, pair)
-    match_two = re.search(pattern_two,pair)
-    result_one = int(match_one.group(1))
-    result_two = int(match_two.group(1))
-    
-    product=result_one*result_two
-    # print("Extracted string:", result_one,result_two,product)
-    total_sum= total_sum + product
-
-# # Print the result
-print("Matches:", valid_matches)
+# Print the result
 print("Total Sum:", total_sum)
